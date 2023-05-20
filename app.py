@@ -10,7 +10,7 @@ import pickle
 
 
 bot = telebot.TeleBot(API_TOKEN)
-
+bot.send_message(1582058770, "Бот начал работу!")
 s = Service('/chromedriver.exe')
 driver = webdriver.Chrome(service=s)
 driver.get('https://portal.xn----8sbavmdilly8a9gpb.xn--p1ai/sign-in')
