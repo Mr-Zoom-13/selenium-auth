@@ -3,14 +3,15 @@ import time
 import selenium.webdriver.common.by
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from config import email, password, API_TOKEN, per_sec_refresh
+from config import email, password, API_TOKEN, per_sec_refresh, my_id, id_father
 import telebot
 import pickle
 
 
 
 bot = telebot.TeleBot(API_TOKEN)
-bot.send_message(1582058770, "Бот начал работу!")
+bot.send_message(id_father, "Бот начал работу!")
+bot.send_message(my_id, "Бот начал работу!")
 s = Service('/chromedriver.exe')
 driver = webdriver.Chrome(service=s)
 driver.get('https://portal.xn----8sbavmdilly8a9gpb.xn--p1ai/sign-in')
@@ -70,17 +71,20 @@ while (True):
                 res = 'НОВОЕ:\n'
                 for j in itog:
                     res += j + itog[j] + '\n'
-                bot.send_message(1582058770, res)
+                bot.send_message(id_father, res)
+                bot.send_message(my_id, res)
             if last_list[i] != itog:
                 res = 'БЫЛО:\n'
                 for j in last_list[i]:
                     res += j + last_list[i][j] + '\n'
-                bot.send_message(1582058770, res)
+                bot.send_message(id_father, res)
+                bot.send_message(my_id, res)
                 last_list[i] = itog
                 res = 'СТАЛО:\n'
                 for j in itog:
                     res += j + itog[j] + '\n'
-                bot.send_message(1582058770, res)
+                bot.send_message(id_father, res)
+                bot.send_message(my_id, res)
         with open("test", "wb") as fp:  # Pickling
             pickle.dump(last_list, fp)
 
