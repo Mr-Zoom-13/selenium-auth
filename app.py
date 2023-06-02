@@ -31,7 +31,8 @@ while (True):
     new = driver.page_source.split('table_signal_1')[1]
     if last != new:
         check = last.split('</table>')[0].split('<tr>')[2:]
-        for i in range(2, len(check)):
+        current = []
+        for i in range(len(check)):
             t = BeautifulSoup(check[i])
             hide_mobile_signal = t.find_all('div', class_='hide_mobile_signal')[0].text
             tg_signal_id = t.find_all('td', class_='tg_signal_id')[0].text
@@ -51,7 +52,7 @@ while (True):
             tg_signal_price_close = t.find_all('td', class_='tg_signal_price_close')[0].text
             tg_signal_d1 = t.find_all('td', class_='tg_signal_d1')[0].text
             tg_signal_d2 = t.find_all('td', class_='tg_signal_d2')[0].text
-            itog = {'№: ': hide_mobile_signal, 'ID: ': tg_signal_id,
+            itog = {'ID: ': tg_signal_id,
                     'Инструмент: ': tg_signal_tiker,
                     'Статус: ': tg_signal_status, 'Направление: ': tg_signal_diraction,
                     'Дата входа: ': tg_signal_date_open,
@@ -66,25 +67,40 @@ while (True):
                     'R факт: ': tg_signal_take_profit_5,
                     'Доходность, 1% риска: ': tg_signal_d1,
                     'Доходность, 2% риска: ': tg_signal_d2}
-            if i >= len(last_list):
+            current.append(itog)
+            flag = 0
+            if itog['ID: '] == '1628':
+                pass
+            for j in range(len(last_list)):
+                if last_list[j]['ID: '] == itog['ID: ']:
+                    if last_list[j] != itog:
+                        res = 'ИЗМЕНЕНИЯ:\n'
+                        for k in last_list[j]:
+                            if last_list[j][k] != itog[k]:
+                                res += k + itog[k] + ' (' + last_list[j][k] + ')\n'
+                            else:
+                                res += k + last_list[j][k] + '\n'
+                        bot.send_message(id_father, res)
+                        bot.send_message(my_id, res)
+                        last_list[j] = itog
+                        flag = 1
+                        break
+                    else:
+                        flag = 2
+            if flag == 0:
                 last_list.append(itog)
                 res = 'НОВОЕ:\n'
                 for j in itog:
                     res += j + itog[j] + '\n'
                 bot.send_message(id_father, res)
                 bot.send_message(my_id, res)
-            if last_list[i] != itog:
-                res = 'БЫЛО:\n'
-                for j in last_list[i]:
-                    res += j + last_list[i][j] + '\n'
-                bot.send_message(id_father, res)
-                bot.send_message(my_id, res)
-                last_list[i] = itog
-                res = 'СТАЛО:\n'
-                for j in itog:
-                    res += j + itog[j] + '\n'
-                bot.send_message(id_father, res)
-                bot.send_message(my_id, res)
+
+        i = 0
+        while i < len(last_list):
+            if last_list[i] not in current:
+                del last_list[i]
+            else:
+                i += 1
         with open("test", "wb") as fp:  # Pickling
             pickle.dump(last_list, fp)
 
